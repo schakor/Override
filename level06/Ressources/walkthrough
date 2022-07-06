@@ -1,0 +1,53 @@
+HOW TO FIND THE FLAG:
+
+After analysing the binary file level06 and reverse engineered it we can see there is two functions : main and auth
+
+The programm asks the user for two input : login and serial. The login is hashed and give us a serial. If we find the correct serial then we execute the shell.
+
+The login size must be superior or equal to 6.
+
+We need to bypass the ptrace in the auth function so let's put the first breakpoint
+
+b *auth+114
+
+Let's put another breakpoint when there is the comparison with the hashed value ->
+
+b *auth+286
+
+gdb) r
+Starting program: /home/users/level06/level06 
+***********************************
+*		level06		  *
+***********************************
+-> Enter Login: schakor
+***********************************
+***** NEW ACCOUNT DETECTED ********
+***********************************
+-> Enter Serial: lol
+
+Breakpoint 1, 0x080487ba in auth ()
+(gdb) set $eax = 0
+(gdb) c
+Continuing.
+
+Breakpoint 2, 0x08048866 in auth ()
+
+(gdb) x/d $ebp - 0x10
+0xffffd478:	6231024
+
+
+level06@OverRide:~$ ./level06
+***********************************
+*		level06		  *
+***********************************
+-> Enter Login: schakor
+***********************************
+***** NEW ACCOUNT DETECTED ********
+***********************************
+-> Enter Serial: 6231024
+Authenticated!
+$ whoami
+level07
+$ cat /home/users/level07/.pass
+GbcPDRgsFK77LNnnuh7QyFYA2942Gp8yKj9KrWD8
+

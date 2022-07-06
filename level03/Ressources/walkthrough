@@ -1,0 +1,26 @@
+HOW TO FIND THE FLAG:
+
+After analysing the binary file and reverse engineered it we can se there is 3 functions : main, test and decrypt
+
+The goal here is to find the correct password that will match "Congratulations!" after being decrypted.
+
+key = number - password should be inferior or equal to 21 so 322424845 - password <= 21
+
+-> so the passowrd is betwen 322424824 and 322424845
+
+Let's try the passwords -> for ((i = 322424824; i <= 322424845; i++)); do echo "$i" | ./level03; done
+
+We see that for the fourth arguments the password is correct so the password is 322424827
+
+
+level03@OverRide:~$ ./level03
+***********************************
+*		level03		**
+***********************************
+Password:322424827
+$ whoami
+level04
+$ cat /home/users/level04/.pass
+kgv3tkEb9h2mLkRsPkXRfc2mHbjMxQzvb2FrgKkf
+
+su level04 -> kgv3tkEb9h2mLkRsPkXRfc2mHbjMxQzvb2FrgKkf

