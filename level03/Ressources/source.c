@@ -26,24 +26,10 @@ void    test(int password, int number)
     int     key;
 
     key = number - password;
-    if (key <= 21)
+    if ((key >= 1 && key <= 9) || (key >= 16 && key <= 21))
         decrypt(key);
-    decrypt(rand()); return ;
-    decrypt(rand()); return ;
-    decrypt(rand()); return ;
-    decrypt(rand()); return ;
-    decrypt(rand()); return ;
-    decrypt(rand()); return ;
-    decrypt(rand()); return ;
-    decrypt(rand()); return ;
-    decrypt(rand()); return ;
-    decrypt(rand()); return ;
-    decrypt(rand()); return ;
-    decrypt(rand()); return ;
-    decrypt(rand()); return ;
-    decrypt(rand()); return ;
-    decrypt(rand()); return ;
-    decrypt(rand()); return ;
+    else
+        decrypt(rand());
 }
 
 int     main()

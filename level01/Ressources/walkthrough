@@ -26,7 +26,7 @@ Program received signal SIGSEGV, Segmentation fault.
 
 Here we are going to use a ret2libc attack. The goal is to use a function already coded in the libc that we can use (system),
 
-The payload will be of the form ; OFFSET TO OVERFLOW + ADRESS OF SYSTEM() + RETURN ADRESS + ADRESS OF BIN/SH
+The payload will be of the form : dat_wil + \n +  OFFSET TO OVERFLOW + ADRESS OF SYSTEM() + RETURN ADRESS + ADRESS OF BIN/SH
 
 Let's find the adress of system ;
 

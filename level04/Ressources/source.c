@@ -10,11 +10,11 @@ int main()
 {
     pid_t   child;
     int     wstatus;
-    char    buff[156];
+    char    buff[128];
 
     child = fork();
     wstatus = 0;
-    memset(buff, '\0', 156);
+    memset(buff, '\0', 128);
     if (child == 0)
     {
         prctl(1, 1);

